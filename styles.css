@@ -42,19 +42,25 @@ h2 {
 .middle {
   padding-left: 80px;
   padding-right: 90px;
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
+  text-align: center;
 }
+#pixel_canvas {
+  display:inline-block;
+}
+
 .left {
   position: fixed;
   left: 12%;
   transform: translateX(-12%);
+  bottom: 15%;
+  transform: translateY(-15%);
 }
 .right {
   position: fixed;
   right: 4%;
   transform: translateX(-4%);
+  bottom: 31%;
+  transform: translateY(-31%);
 }
 
 .error {
@@ -308,6 +314,8 @@ table {
     border-collapse: collapse;
     margin: 0 auto;
 }
+
+
 
 tr {
 }
