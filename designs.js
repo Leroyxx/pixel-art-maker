@@ -2,7 +2,7 @@ var table = $('.pixel_canvas');
 var originalGridWidth;
 var originalGridHeight; //required for IDing grid additions,variable will be incrememnted upon addition of height
 var columnLeftPlus = 1; // times used addColumnLeft+1, this ensures a negative id for each new cell
-var lineDownPlus = 1;
+var lineDownPlus = 0;
 var lineUpPlus = 1; //times used addLineUp+1, this ensures a negative id for each new cell
 var columnRightPlus = 1; //" " columnRight", " " " " " " " "
 
@@ -11,6 +11,59 @@ $('html').bind('keypress', function(e) {
         return false;
     }
 }); //block enter key so no table reset by accident
+
+function randomPixelTip() {
+    $("#tip").children().first().next().remove();
+    var tipNum = getRandomInt(4);
+    if (tipNum === 0) {
+        $("#tip").append("<span>You can save your pixel creation in PixelCode and then load it in the future that is near and far.</span>");
+    } else if (tipNum === 1) {
+        $("#tip").append("<span>This entire website was made possible because of an Udacity course on Web Development and Google's sponsership of it!</span>");
+    } else if (tipNum === 2) {
+        $("#tip").append('<span>"Back To The Future" is a must watch trilogy!</span>');
+    } else if (tipNum === 3) {
+        $("#tip").append("<span>Your hefty drawing staff holds your eraser color in its core and switches it with your pen color when in need.</span>");
+    }
+
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * Math.floor(max));
+    }
+}
+randomPixelTip();
+
+
+
+$(function toolTips() { //used code: github csasbach/tooltip.css
+
+    $('#huh').each(function() {
+
+        $(this).data('title', $(this).attr('title'));
+        $(this).removeAttr('title');
+
+    });
+
+    $('#huh').mouseover(function() {
+
+        $('#huh').next('.tooltip').remove();
+
+        $(this).after('<span class="tooltip">' + $(this).data('title') + '</span>');
+
+        var left = $(this).position().left + $(this).width() + 4;
+        var top = $(this).position().top - 4;
+        $(this).next().css('left', left);
+        $(this).next().css('top', top);
+
+    });
+
+    $('#huh').mouseout(function() {
+
+        $(this).next('.tooltip').remove();
+
+    })
+
+});
+
+
 
 $(function backToSquareOne() {
     $("#back").on("click", function() {
@@ -23,6 +76,30 @@ $(function backToSquareOne() {
         $(".saveOrLoad").hide();
         $("#sizePicker").show();
         $(this).hide();
+        randomPixelTip();
+    })
+})
+
+$(function minimaxiWindowsFunctionality() {
+    const minimaxi = $(".minimaxi");
+    minimaxi.on("click", function(event) {
+        var w = $(this).parent().next(".wrapper");
+        var l = w.children(); //animation was ultimately based on a codepen by Matt Baxter (Expand/Collapse CSS Transition)
+        event.preventDefault;
+        if ($(this).text() === "-") {
+            w.height(0);
+            $(this).text("+");
+            $(this).parent().animate({
+                'font-size': '18px'
+            }, 55);
+        } else if ($(this).text() === "+") {
+            w.height(l.outerHeight(true));
+            $(this).text("-");
+            $(this).parent().animate({
+                'font-size': '30px'
+            }, 55);
+        }
+        return false;
     })
 })
 
@@ -108,6 +185,7 @@ $(function gridMakingFunctionality() {
         lineUpPlus = 1;
         columnLeftPlus = 1;
         columnRightPlus = 1;
+        lineDownPlus = 1;
         $("#sizePicker").hide();
         $("#sizeSelect").detach().appendTo("#sizeSelectLive");
         $("#back").show();
@@ -116,11 +194,13 @@ $(function gridMakingFunctionality() {
         originalGridWidth = gridWidth;
 
         undoArray = [];
+        undoType = $('input[name=undoType]:checked').val(); //get which undo functionality to use
         savePointIndex = 0;
         undoArray.push(createSavePoint()); //creates first save point
 
         toolIcons.paintBucketIcon._2load(toolIcons.paintBucketIcon._pixelCode);
         toolIcons.penIcon._2load(toolIcons.penIcon._pixelCode);
+        randomPixelTip();
     };
 
     const sizePickerForm = document.querySelector("#sizePicker");
@@ -161,7 +241,7 @@ $(function gridMakingFunctionality() {
     loadCodeButton.on("click", function(event) {
         event.preventDefault();
         $("#loadBox").children().remove();
-        $("#loadBox").append('<br><div class="flexalign"><div><textarea rows="8" cols="40" placeholder="Paste PixelCode here!"></textarea></div><div> &nbsp; <button id="loadButton" class="biggerBlackButton">Load <br> Creation!</button></div></div>');
+        $("#loadBox").append('<br><div class="flexalign"><div><textarea rows="8" cols="37" placeholder="Paste PixelCode here!"></textarea></div><div> &nbsp; <button id="loadButton" class="biggerBlackButton">Load <br> Creation!</button></div></div>');
     })
     $("#loadBox").on("click", "#loadButton", function(event) {
         event.preventDefault();
@@ -178,14 +258,15 @@ $(function gridMakingFunctionality() {
 }); //end brackets of gridMakingFunctionality
 
 var undoArray = [];
+var undoType;
 var savePointIndex = 0;
 
 function createSavePoint() {
     var gridWidthString = table.children().first().children().length;
     var gridWidth = parseInt(gridWidthString);
     var gridHeight = table.children().length;
-    $("#saveBox").children().remove();
-    var pixelCode = [gridHeight, gridWidth, $("#input_size").val(), columnLeftPlus, columnRightPlus, lineUpPlus, lineDownPlus];
+    $("#containerSaveBox").hide();
+    var pixelCode = [gridHeight, gridWidth];
     var pixelCodeCells = 1;
     //Function to convert hex format to a rgb color, credits to Mottie of JSFiddle
     function rgb2hex(rgb) {
@@ -196,8 +277,8 @@ function createSavePoint() {
             ("0" + parseInt(rgb[3], 10).toString(16)).slice(-2) : '';
     }
     table.children().children().each(function() {
-        pixelCode.push(" " + pixelCodeCells);
-        pixelCode.push(" " + rgb2hex($(this).css("background-color")))
+        pixelCode.push(pixelCodeCells);
+        pixelCode.push(rgb2hex($(this).css("background-color")))
         pixelCodeCells++
     });
 
@@ -209,18 +290,27 @@ function saveSavePoint() {
         savePointIndex++
         undoArray[savePointIndex] = createSavePoint();
 
-    } else {
+    } else if (undoArray.length - 1 !== savePointIndex && undoType === "oldUndo") {
 
         undoArray[savePointIndex + 1] = createSavePoint();
         for (var x = undoArray.length - 1; x >= savePointIndex + 2; x--) {
             undoArray.pop(x)
         }
         savePointIndex++;
+    } else if (undoArray.length - 1 !== savePointIndex && undoType === "smartUndo") {
+        var mirrorIndex = undoArray.length;
+        for (var y = undoArray.length - 2; y >= savePointIndex - 1; y--) {
+            undoArray[mirrorIndex] = (undoArray[y]);
+            mirrorIndex++;
+        }
+        savePointIndex = undoArray.length - 1;
+        undoArray[savePointIndex] = createSavePoint();
     }
     //  console.log('length -1 : ' + (undoArray.length-1) + ' index:' + savePointIndex)
 }
 
 function undo() {
+    $("#containerSaveBox").hide();
 
     if (savePointIndex == 0) {} else {
         savePointIndex--
@@ -230,12 +320,12 @@ function undo() {
 
     var latestVersion = undoArray.slice(savePointIndex)[0];
 
-    columnLeftPlus = latestVersion[3];
-    columnRightPlus = latestVersion[4];
-    lineUpPlus = latestVersion[5];
-    lineDownPlus = latestVersion[6];
+    columnLeftPlus = 1;
+    columnRightPlus = 1;
+    lineUpPlus = 1;
+    lineDownPlus = 1;
 
-    function makeGrid(gridHeight, gridWidth, squareSize) {
+    function makeGrid(gridHeight, gridWidth) {
 
         table.children().remove();
         for (var h = 1; h <= gridHeight; h++) {
@@ -244,29 +334,28 @@ function undo() {
                 table.children().last().append('<td id="' + h + "_" + w + '" class="drawable"></td>');
             }
         }
-        $(".drawable").css("width", squareSize);
-        $(".drawable").css("height", squareSize);
         originalGridHeight = gridHeight;
         originalGridWidth = gridWidth;
 
     }
 
-    makeGrid(latestVersion[0], latestVersion[1], latestVersion[2]);
-    $("#input_size").val(latestVersion[2]);
+    makeGrid(latestVersion[0], latestVersion[1]);
 
-    for (var s = 7; s <= latestVersion.length - 1; s++) {
-        if (s % 2 !== 0) {
+    for (var s = 2; s <= latestVersion.length - 1; s++) {
+        if (s % 2 === 0) {
             var indexS = latestVersion[s] - 1;
-        } else if (s % 2 === 0) {
+        } else if (s % 2 !== 0) {
             var cellColor = latestVersion[s];
             table.children().children().eq(indexS).css("background-color", cellColor);
         }
     }
-
+    changeSquareSizeLive();
     displayEndResult(table);
+    borderChangeFunctionality();
 }
 
 function redo() {
+    $("#containerSaveBox").hide();
 
     if (savePointIndex == undoArray.length - 1) {} else {
         savePointIndex++
@@ -275,12 +364,12 @@ function redo() {
 
     var latestVersion = undoArray.slice(savePointIndex)[0];
 
-    columnLeftPlus = latestVersion[3];
-    columnRightPlus = latestVersion[4];
-    lineUpPlus = latestVersion[5];
-    lineDownPlus = latestVersion[6];
+    columnLeftPlus = 1;
+    columnRightPlus = 1;
+    lineUpPlus = 1;
+    lineDownPlus = 1;
 
-    function makeGrid(gridHeight, gridWidth, squareSize) {
+    function makeGrid(gridHeight, gridWidth) {
 
         table.children().remove();
         for (var h = 1; h <= gridHeight; h++) {
@@ -289,33 +378,33 @@ function redo() {
                 table.children().last().append('<td id="' + h + "_" + w + '" class="drawable"></td>');
             }
         }
-        $(".drawable").css("width", squareSize);
-        $(".drawable").css("height", squareSize);
         originalGridHeight = gridHeight;
         originalGridWidth = gridWidth;
 
     }
 
-    makeGrid(latestVersion[0], latestVersion[1], latestVersion[2]);
-    $("#input_size").val(latestVersion[2]);
+    makeGrid(latestVersion[0], latestVersion[1]);
 
-    for (var s = 7; s <= latestVersion.length - 1; s++) {
-        if (s % 2 !== 0) {
+    for (var s = 2; s <= latestVersion.length - 1; s++) {
+        if (s % 2 === 0) {
             var indexS = latestVersion[s] - 1;
-        } else if (s % 2 === 0) {
+        } else if (s % 2 !== 0) {
             var cellColor = latestVersion[s];
             table.children().children().eq(indexS).css("background-color", cellColor);
         }
     }
-
+    changeSquareSizeLive();
     displayEndResult(table);
+    borderChangeFunctionality();
 
 }
 $(function keyFunctionality() {
     $(document).keydown(function(e) { // ctrl+z/+z+shift listener
         if (e.which === 90 && e.ctrlKey && !e.shiftKey) {
+            e.preventDefault(); // so browser doesn't change value for square size
             undo();
         } else if (e.which === 90 && e.ctrlKey && e.shiftKey) {
+            e.preventDefault(); // so browser doesn't change value for square size
             redo();
         } else {}
     });
@@ -429,8 +518,8 @@ $(function addToGridFunctionality() {
     });
 
     function removeLineDown() {
-        if (table.children().children().length === 1) {
-            $("#messages").append('<p class="errorMessage text"><span class="error">Error:</span> Pixel canvas cannot shortfall 1 square!');
+        if (table.children().children().length === 1 || table.children().length === 1) {
+            $("#messages").append('<p class="errorMessage text"><span class="error">Error:</span> Cannot clear canvas');
             $('.errorMessage').delay(1000).fadeOut(650);
         } else {
             table.children().last().remove();
@@ -443,8 +532,8 @@ $(function addToGridFunctionality() {
     }
 
     function removeLineUp() {
-        if (table.children().children().length === 1) {
-            $("#messages").append('<p class="errorMessage text"><span class="error">Error:</span> Pixel canvas cannot shortfall 1 square!');
+        if (table.children().children().length === 1 || table.children().length === 1) {
+            $("#messages").append('<p class="errorMessage text"><span class="error">Error:</span> Cannot clear canvas!');
             $('.errorMessage').delay(1000).fadeOut(650);
         } else {
             table.children().first().remove();
@@ -458,7 +547,7 @@ $(function addToGridFunctionality() {
 
     function removeColumnRight() {
         if (table.children().children().length === 1) {
-            $("#messages").append('<p class="errorMessage text"><span class="error">Error:</span> Pixel canvas cannot shortfall 1 square!');
+            $("#messages").append('<p class="errorMessage text"><span class="error">Error:</span> Cannot clear canvas!');
             $('.errorMessage').delay(1000).fadeOut(650);
         } else {
             table.children().each(function() {
@@ -474,7 +563,7 @@ $(function addToGridFunctionality() {
 
     function removeColumnLeft() {
         if (table.children().children().length === 1) {
-            $("#messages").append('<p class="errorMessage text"><span class="error">Error:</span> Pixel canvas cannot shortfall 1 square!');
+            $("#messages").append('<p class="errorMessage text"><span class="error">Error:</span> Cannot clear canvas!');
             $('.errorMessage').delay(1000).fadeOut(650);
         } else {
             table.children().each(function() {
@@ -489,7 +578,6 @@ $(function addToGridFunctionality() {
     }
 
     function addLineDown() {
-        lineDownPlus++;
         var gridWidthString = table.children().first().children().last().attr("id").toString().split('_').pop();
         // gets last number of ID of last cell in first line
         var gridWidth = parseInt(gridWidthString);
@@ -499,9 +587,12 @@ $(function addToGridFunctionality() {
         for (var w = gridWidthBeginID; w <= gridWidth; w++) {
             table.children().last().append('<td id="' + (parseFloat(originalGridHeight) + parseFloat(lineDownPlus)) + "_" + w + '" class="drawable"></td>');
         }
+
+        lineDownPlus++;
         borderChangeFunctionality();
         changeSquareSizeLive();
         saveSavePoint();
+        displayEndResult(table);
     }
 
     function addLineUp() {
@@ -518,6 +609,7 @@ $(function addToGridFunctionality() {
         borderChangeFunctionality();
         changeSquareSizeLive();
         saveSavePoint();
+        displayEndResult(table);
     }
 
     function addColumnLeft() {
@@ -528,6 +620,7 @@ $(function addToGridFunctionality() {
         borderChangeFunctionality();
         changeSquareSizeLive();
         saveSavePoint();
+        displayEndResult(table);
     }
 
     function addColumnRight() {
@@ -538,6 +631,7 @@ $(function addToGridFunctionality() {
         borderChangeFunctionality();
         changeSquareSizeLive();
         saveSavePoint();
+        displayEndResult(table);
     }
 
 
@@ -619,9 +713,23 @@ $(function drawingFunctionality() {
         tool = 1;
         styleButtons();
     });
-    fillButton.on("click", function(event) {
-        tool = 2; //bucket is 2
-        styleButtons();
+    fillButton.on("mousedown", function(event) {
+        if (ctrlDown && event.which == 1) {
+            $(".drawable").css("background-color", color);
+            displayEndResult(table);
+            saveSavePoint();
+            tool = 2;
+            styleButtons();
+        } else if (ctrlDown && event.which == 3) {
+            $(".drawable").css("background-color", eraseColor);
+            displayEndResult(table);
+            saveSavePoint();
+            tool = 2;
+            styleButtons();
+        } else {
+            tool = 2; //bucket is 2
+            styleButtons();
+        }
     })
 
     //Function to convert hex format to a rgb color, credits to Mottie of JSFiddle
@@ -787,14 +895,6 @@ $(function drawingFunctionality() {
         }
     });
 
-    const fillGridSubmit = $("#fillGrid");
-    fillGridSubmit.on('click', function(event) {
-        var fillColor = color;
-        $(".drawable").css("background-color", color);
-        displayEndResult(table);
-        saveSavePoint();
-    })
-
     eraseColor = $("#eraseColor").val();
     $("#eraseColor").on("change", function() {
         eraseColor = $(this).val();
@@ -813,8 +913,9 @@ $(function saveFunctionality() {
     saveHTMLButton.on("click", function(event) {
         $("#saveBox").children().remove();
         var endTableHTML = $(".end_result").html();
-        $("#saveBox").append('<br><textarea rows="10" cols="41">' + endTableHTML +
-            '</textarea> <br> <span class="text featureDescription">Paste this code somewhere on the web for your <br> pixel creation to show up!</span> ');
+        $("#saveBox").append('<br><textarea onclick="this.focus();this.select()" readonly="readonly" rows="10" cols="41">' + endTableHTML +
+            '</textarea> <br> <p class="text featureDescription">Paste this code somewhere on the web for your <br> pixel creation to show up!</p> ');
+        $("#containerSaveBox").show();
     })
     const saveCodeButton = $('#saveCodeButton');
     saveCodeButton.on("click", function(event) {
@@ -837,9 +938,13 @@ $(function saveFunctionality() {
             pixelCode.push(" " + rgb2hex($(this).css("background-color")))
             pixelCodeCells++
         })
-        $("#saveBox").append('<br><div class="flexalign"><div class="leftflex"><textarea rows="8" cols="12">' +
+        $("#saveBox").append('<br><div class="flexalign"><div class="leftflex"><textarea onclick="this.focus();this.select()" readonly="readonly" rows="8" cols="12">' +
             pixelCode + '</textarea> </div> <div class="rightflex"> <label> <br> &nbsp; Copy and save this code to<br> somwhere safe so you can <br> load your progress later! </label></div></div>');
+        $("#containerSaveBox").show();
     })
-
+    const closeSaveBox = $("#closeSaveBox");
+    closeSaveBox.on("click", function(event) {
+        $("#containerSaveBox").hide();
+    })
 
 });
