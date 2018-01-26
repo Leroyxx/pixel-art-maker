@@ -29,7 +29,7 @@ h2 {
 
 .icons {
   /*165px is your Menu width with borders*/
-  max-width: calc(100% - px);
+  max-width: calc(100% - 21px);
   /*For cross browser*/
   -webkit-max-width: calc(100% - 21px);
   -moz-max-width: calc(100% - 21px);
@@ -39,28 +39,53 @@ h2 {
   vertical-align: top;
 }
 
+.tooltip
+{
+  position: absolute;
+      background-color: rgba(235, 235, 235, 0.89);
+      font-size: 14px;
+      color: #000000f2;
+      padding: 6px;
+      border-radius: 4px;
+      width: 300px;
+      -moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+      z-index: 999 !important;
+}
+
+#huh {
+  cursor: help;
+  color:lightgrey;
+}
+
 .middle {
   padding-left: 80px;
   padding-right: 90px;
   text-align: center;
 }
-#pixel_canvas {
+
+.pixel_canvas {
+  margin-top:30px;
   display:inline-block;
+}
+
+.saveOpened {
+  position: fixed;
+  right: 4%;
+  transform: translateX(-4%);
+  top: 80%;
+  transform: translateY(-80%);
 }
 
 .left {
   position: fixed;
-  left: 12%;
-  transform: translateX(-12%);
-  bottom: 15%;
-  transform: translateY(-15%);
+  left: 9%;
+  top: 43%;
 }
+
 .right {
   position: fixed;
   right: 4%;
-  transform: translateX(-4%);
-  bottom: 31%;
-  transform: translateY(-31%);
+  bottom: 35%;
 }
 
 .error {
@@ -90,6 +115,7 @@ h3 {
 }
 
 input[type=color] {
+  outline: none !important;
 	width: 21px;
 	height: 21px;
   border: 1px solid white;
@@ -122,6 +148,20 @@ input:invalid {
 .text2 {
     font-family: 'Barlow Semi Condensed', sans-serif;
     font-size: 18px;
+}
+
+#containerSaveBox {
+  position: fixed;
+  bottom: 40%;
+  right: 40%;
+  background-color: white;
+  border-color: grey;
+  border-width: 1px;
+  border-style:solid;
+}
+
+#iStayHere {
+  text-align:right;
 }
 
 .featureDescription {
@@ -166,6 +206,7 @@ td {
 }
 
 #submit_button {
+  outline: none !important;
   position: relative;
   top: 1px;
   width: 6em;
@@ -180,6 +221,7 @@ td {
 }
 
 #loadCodeButton {
+  outline: none !important;
   position: relative;
   top: 1px;
   width: 13em;
@@ -187,13 +229,14 @@ td {
   border-width: 1px;
   border-color: black;
   background-color: white;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: bold;
   font-family: 'Barlow Semi Condensed', sans-serif;
   cursor: pointer;
 }
 
 .addButton {
+    outline: none !important;
     position: relative;
     top: 1px;
     width: 4.9em;
@@ -232,6 +275,7 @@ td {
 	border: 0;
 	vertical-align: baseline;
 }
+
 .shorterer {
   margin: 0;
 	padding: 7px;
@@ -242,9 +286,8 @@ td {
   height: 2.1em;
   width: 3em;
 }
-
-
 .blackButton {
+    outline: none !important;
     position: relative;
     top: 1px;
     width: 3.5em;
@@ -259,6 +302,38 @@ td {
     cursor: pointer;
 }
 
+#closeSaveBox {
+    position: relative;
+    top: 1px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;
+    background-color: red;
+    color: white;
+    font-size: 13px;
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    cursor: pointer;
+}
+
+.wrapper {
+  background: white;
+  overflow: hidden;
+  height: 0;
+  transition: height 200ms;
+}
+
+.minimaxi {
+    background: none !important;
+    color: black;
+    border: none;
+    padding: 0! important;
+    font: inherit;
+    font-family: 'Barlow Semi Condensed Medium', sans-serif;
+    transform: translateY(-16%);
+    cursor: pointer;
+    outline: none !important;
+}
+
 .loadTemplates {
   position: relative;
   top: 1px;
@@ -268,11 +343,12 @@ td {
   background-color: white;
   color: black;
   font-size: 12px;
-  font-family: 'Barlow Semi Condensed', sans-serif;
+  font-family: 'VT323', monospace;
   cursor: pointer;
 }
 
 .biggerBlackButton {
+    outline: none !important;
     position: relative;
     height: 7.4em;
     width: 9em;
@@ -288,6 +364,7 @@ td {
 }
 
 .wideaddButton {
+  outline: none !important;
   position: relative;
   top: 1px;
   width: 8.5em;
@@ -364,6 +441,7 @@ small {
 }
 
 input[type=number] {
+    outline: none !important;
     width: 6em;
     border-style: solid;
     border-width: 1px;
@@ -381,6 +459,7 @@ input[type=number] {
 
 
 input[type=checkbox] {
+  outline: none !important;
   cursor: pointer;
 }
 
