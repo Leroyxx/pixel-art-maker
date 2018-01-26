@@ -726,7 +726,7 @@ $(function drawingFunctionality() {
             saveSavePoint();
             tool = 2;
             styleButtons();
-        } else {
+        } else if (event.which == 1)  {
             tool = 2; //bucket is 2
             styleButtons();
         }
