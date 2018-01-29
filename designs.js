@@ -106,7 +106,7 @@ let right = $(".right");
 let left = $(".left");
 function placeSides() {
   windowWidth = $(window).width();
-  if (528/windowWidth >= 0.5) {
+  if (528/windowWidth >= 0.48) {
     left.removeClass("leftBe");
     right.removeClass("rightBe")
   }
