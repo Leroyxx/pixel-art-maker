@@ -76,26 +76,27 @@ h2 {
   transform: translateY(-80%);
 }
 
-.left {
+.leftBe {
   position: fixed;
   left: 9%;
-  top: 43%;
+  top: 39%;
 }
 
 .right {
+  padding-top: 4px
+}
+
+.rightBe {
   position: fixed;
   right: 4%;
-  bottom: 35%;
+  bottom: 39%;
+  text-align: right;
 }
 
 .error {
   font-family: 'VT323', monospace;
   font-size:26px;
   color: white;
-}
-
-.right {
-  text-align: right;
 }
 
 
@@ -229,7 +230,7 @@ td {
   border-width: 1px;
   border-color: black;
   background-color: white;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: bold;
   font-family: 'Barlow Semi Condensed', sans-serif;
   cursor: pointer;
@@ -275,7 +276,6 @@ td {
 	border: 0;
 	vertical-align: baseline;
 }
-
 .shorterer {
   margin: 0;
 	padding: 7px;
@@ -286,6 +286,8 @@ td {
   height: 2.1em;
   width: 3em;
 }
+
+
 .blackButton {
     outline: none !important;
     position: relative;
@@ -435,8 +437,9 @@ small {
 
 #messages {
   margin-bottom: 0px;
+  z-index:998;
   position: fixed;
-  bottom: 60%;
+  bottom: 66%;
   right: 38%
 }
 
