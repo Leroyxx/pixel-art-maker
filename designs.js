@@ -117,7 +117,7 @@ function placeSides() {
 }
 $(placeSides());
 $(window).resize(function() {
-  console.log("resized");
+//  console.log("resized");
   placeSides();
 });
 
